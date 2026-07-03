@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI-Quant · AI量化投研报告</title>
+<!-- Font Awesome for icons -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<style>
+  :root {
+    --bg: #0f0f1a;
+    --card-bg: #1a1a2e;
+    --card-border: #2a2a4a;
+    --text-primary: #e8e8f0;
+    --text-secondary: #9090b0;
+    --accent: #6c5ce7;
+    --accent-light: #a29bfe;
+    --green: #00b894;
+    --red: #ff6b6b;
+    --orange: #fdcb6e;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC", "Microsoft YaHei", sans-serif;
+    background: var(--bg);
+    color: var(--text-primary);
+    min-height: 100vh;
+  }
+
+  /* Navigation */
+  .navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 40px;
+    background: rgba(15,15,26,0.95);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--card-border);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .navbar .brand {
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--text-primary);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .navbar .brand i { color: var(--accent); font-size: 26px; }
+  .navbar .brand span { background: linear-gradient(135deg, var(--accent), var(--accent-light)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+  .navbar .nav-links { display: flex; gap: 24px; align-items: center; }
+  .navbar .nav-links a { color: var(--text-secondary); text-decoration: none; font-size: 14px; transition: color 0.2s; }
+  .navbar .nav-links a:hover { color: var(--text-primary); }
+  .navbar .github-link { color: var(--text-secondary); font-size: 18px; }
+
+  /* Hero */
+  .hero {
+    text-align: center;
+    padding: 60px 20px 40px;
+  }
+  .hero h1 {
+    font-size: 40px;
+    font-weight: 700;
+    background: linear-gradient(135deg, #fff, var(--accent-light));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 12px;
+  }
+  .hero p { color: var(--text-secondary); font-size: 16px; max-width: 600px; margin: 0 auto; line-height: 1.7; }
+
+  /* Stats Bar */
+  .stats-bar {
+    display: flex;
+    justify-content: center;
+    gap: 40px;
+    padding: 20px;
+    margin: 0 20px 40px;
+    background: var(--card-bg);
+    border-radius: 12px;
+    border: 1px solid var(--card-border);
+    flex-wrap: wrap;
+  }
+  .stat-item { text-align: center; }
+  .stat-item .num { font-size: 28px; font-weight: 700; color: var(--accent-light); }
+  .stat-item .label { font-size: 12px; color: var(--text-secondary); margin-top: 4px; }
+
+  /* Reports Grid */
+  .container { max-width: 1200px; margin: 0 auto; padding: 0 20px 60px; }
+  .section-title {
+    font-size: 22px;
+    font-weight: 600;
+    margin-bottom: 24px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .section-title i { color: var(--accent); }
+
+  .report-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+    gap: 20px;
+    margin-bottom: 48px;
+  }
+
+  .report-card {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 14px;
+    padding: 24px;
+    transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
+    cursor: default;
+  }
+  .report-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 40px rgba(108,92,231,0.15);
+    border-color: var(--accent);
+  }
+
+  .card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 14px;
+  }
+  .card-header .stock-code {
+    font-size: 12px;
+    color: var(--accent);
+    background: rgba(108,92,231,0.15);
+    padding: 3px 10px;
+    border-radius: 6px;
+    font-weight: 500;
+  }
+  .card-header .badge {
+    font-size: 11px;
+    padding: 3px 10px;
+    border-radius: 6px;
+    font-weight: 500;
+  }
+  .badge.dashboard { background: rgba(0,184,148,0.15); color: var(--green); }
+  .badge.report { background: rgba(108,92,231,0.15); color: var(--accent-light); }
+  .badge.data { background: rgba(253,203,110,0.15); color: var(--orange); }
+
+  .report-card h3 {
+    font-size: 17px;
+    font-weight: 600;
+    margin-bottom: 6px;
+  }
+  .report-card .desc {
+    font-size: 13px;
+    color: var(--text-secondary);
+    line-height: 1.6;
+    margin-bottom: 16px;
+  }
+
+  .card-actions {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .card-actions a {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 7px 14px;
+    border-radius: 8px;
+    font-size: 13px;
+    text-decoration: none;
+    transition: all 0.2s;
+    font-weight: 500;
+  }
+  .card-actions .btn-primary {
+    background: var(--accent);
+    color: white;
+  }
+  .card-actions .btn-primary:hover { background: #5a4bd1; }
+  .card-actions .btn-secondary {
+    background: rgba(255,255,255,0.06);
+    color: var(--text-secondary);
+    border: 1px solid var(--card-border);
+  }
+  .card-actions .btn-secondary:hover { background: rgba(255,255,255,0.1); color: var(--text-primary); }
+
+  /* Footer */
+  .footer {
+    text-align: center;
+    padding: 30px;
+    color: var(--text-secondary);
+    font-size: 13px;
+    border-top: 1px solid var(--card-border);
+  }
+  .footer a { color: var(--accent-light); text-decoration: none; }
+
+  @media (max-width: 640px) {
+    .navbar { padding: 12px 16px; flex-direction: column; gap: 12px; }
+    .hero h1 { font-size: 28px; }
+    .report-grid { grid-template-columns: 1fr; }
+    .stats-bar { gap: 20px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Navbar -->
+<nav class="navbar">
+  <div class="brand">
+    <i class="fas fa-chart-line"></i>
+    <span>AI-Quant</span>
+  </div>
+  <div class="nav-links">
+    <a href="#reports">研究报告</a>
+    <a href="#data">数据看板</a>
+    <a href="https://github.com/Adrianwangjunyao/AI-quant" target="_blank" class="github-link">
+      <i class="fab fa-github"></i>
+    </a>
+  </div>
+</nav>
+
+<!-- Hero -->
+<div class="hero">
+  <h1>AI 量化投研平台</h1>
+  <p>基于 Tushare Pro + AI 的自动化股票分析报告生成系统。<br>数据驱动 · 智能分析 · 持续更新</p>
+</div>
+
+<!-- Stats Bar -->
+<div class="stats-bar">
+  <div class="stat-item">
+    <div class="num">2</div>
+    <div class="label">分析标的</div>
+  </div>
+  <div class="stat-item">
+    <div class="num">6</div>
+    <div class="label">报告/看板</div>
+  </div>
+  <div class="stat-item">
+    <div class="num">488+</div>
+    <div class="label">数据条目</div>
+  </div>
+  <div class="stat-item">
+    <div class="num">1</div>
+    <div class="label">PDF报告</div>
+  </div>
+</div>
+
+<div class="container">
+
+  <!-- Reports Section -->
+  <div class="section-title" id="reports">
+    <i class="fas fa-file-alt"></i> 研究报告
+  </div>
+
+  <div class="report-grid">
+    <!-- 兆易创新 PDF Report -->
+    <div class="report-card">
+      <div class="card-header">
+        <span class="stock-code">603986.SH</span>
+        <span class="badge report">专业报告</span>
+      </div>
+      <h3>兆易创新 · 股票分析报告</h3>
+      <div class="desc">
+        涵盖公司概况、行业分析、基本面分析(含PE/PB历史走势)、技术面分析(均线/MACD/RSI)、估值分析、投资亮点与风险提示。共15页专业PDF报告。
+      </div>
+      <div class="card-actions">
+        <a href="reports/giga_device/兆易创新(603986)_股票分析报告.pdf" target="_blank" class="btn-primary">
+          <i class="fas fa-file-pdf"></i> PDF报告
+        </a>
+        <a href="reports/giga_device/兆易创新(603986)_股票分析报告.md" target="_blank" class="btn-secondary">
+          <i class="fas fa-file-code"></i> Markdown
+        </a>
+      </div>
+    </div>
+
+    <!-- 兆易创新 Dashboard -->
+    <div class="report-card">
+      <div class="card-header">
+        <span class="stock-code">603986.SH</span>
+        <span class="badge dashboard">交互看板</span>
+      </div>
+      <h3>兆易创新 · 行情交互看板</h3>
+      <div class="desc">
+        基于ECharts的交互式行情看板，包含收盘价走势图、成交量柱状图、涨跌幅分析，支持缩放和数据查看。数据覆盖近一年日线行情。
+      </div>
+      <div class="card-actions">
+        <a href="reports/giga_device/兆易创新_行情看板.html" target="_blank" class="btn-primary">
+          <i class="fas fa-chart-bar"></i> 打开看板
+        </a>
+        <a href="reports/giga_device/兆易创新_近一年交易数据.csv" target="_blank" class="btn-secondary">
+          <i class="fas fa-table"></i> 原始数据
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- 过去分析占位 -->
+  <div class="section-title" id="data">
+    <i class="fas fa-database"></i> 数据资产
+  </div>
+
+  <div class="report-grid">
+    <div class="report-card">
+      <div class="card-header">
+        <span class="stock-code">CSV</span>
+        <span class="badge data">数据集</span>
+      </div>
+      <h3>兆易创新 · 近一年交易数据</h3>
+      <div class="desc">
+        包含2025/07/02 - 2026/07/02期间约245个交易日的日线行情数据。<br>
+        字段：开盘价、最高价、最低价、收盘价、涨跌幅、成交量、成交额等
+      </div>
+      <div class="card-actions">
+        <a href="reports/giga_device/兆易创新_近一年交易数据.csv" target="_blank" class="btn-primary">
+          <i class="fas fa-download"></i> 下载CSV
+        </a>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div class="footer">
+  <p>
+    数据来源 <a href="https://tushare.pro" target="_blank">Tushare Pro</a>
+    · 生成工具 WorkBuddy + AI
+    · <a href="https://github.com/Adrianwangjunyao/AI-quant" target="_blank"><i class="fab fa-github"></i> GitHub</a>
+  </p>
+  <p style="margin-top:6px;font-size:12px;">仅供参考，不构成投资建议</p>
+</div>
+
+</body>
+</html>
