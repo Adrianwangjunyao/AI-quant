@@ -6,9 +6,9 @@
 
 | 标的 | 代码 | 报告类型 | 文件 |
 |------|------|---------|------|
-| 兆易创新 | 603986.SH | 专业分析报告(PDF) | [查看](reports/giga_device/兆易创新(603986)_股票分析报告.pdf) |
-| 兆易创新 | 603986.SH | 行情交互看板(HTML) | [查看](reports/giga_device/兆易创新_行情看板.html) |
-| 兆易创新 | 603986.SH | 原始数据(CSV) | [下载](reports/giga_device/兆易创新_近一年交易数据.csv) |
+| 兆易创新 | 603986.SH | 专业分析报告(PDF) | [查看](reports/giga_device/analysis_report.pdf) |
+| 兆易创新 | 603986.SH | 行情交互看板(HTML) | [查看](reports/giga_device/dashboard.html) |
+| 兆易创新 | 603986.SH | 原始数据(CSV) | [下载](reports/giga_device/trading_data.csv) |
 
 ## 技术栈
 
